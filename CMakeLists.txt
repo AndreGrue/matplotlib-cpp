@@ -1,30 +1,27 @@
-project(MatplotlibC++)
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.15)
+project(matplotlib-cpp)
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
+find_package(Eigen3 REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS NumPy REQUIRED)
 
-find_package(Eigen3)
+message(STATUS "Python3_FOUND:              ${Python3_FOUND}")
+message(STATUS "Python3_VERSION:            ${Python3_VERSION}")
+message(STATUS "Python3_INCLUDE_DIRS:       ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python3_LIBRARIES:          ${Python3_LIBRARIES}")
+message(STATUS "Python3_NumPy_FOUND:        ${Python3_NumPy_FOUND}")
+message(STATUS "Python3_NumPy_VERSION:      ${Python3_NumPy_VERSION}")
+message(STATUS "Python3_NumPy_INCLUDE_DIRS: ${Python3_NumPy_INCLUDE_DIRS}")
+message(STATUS "Python3_NumPy_LIBRARIES:    ${Python3_NumPy_LIBRARIES}")
 
-if (${EIGEN3_FOUND})
-  include_directories(${EIGEN3_INCLUDE_DIR})
-else()
-  message(STATUS "Eigen3 not found")
-endif()
-
-find_package(Python3 COMPONENTS Interpreter Development)
-if (${Python3_FOUND})
-  include_directories(${Python3_INCLUDE_DIRS})
-else()
-  message(FATAL_ERROR "Python3 not found, please install it.")
-endif()
-
-find_package(NumPy)
-if (${PYTHON_NUMPY_FOUND})
-  include_directories(${PYTHON_NUMPY_INCLUDE_DIR})
-else()
-  message(WARNING "Python3 NumPy not found, proceeding with -DWITHOUT_NUMPY."
-  " Some functions might not work.")
-  add_definitions(-DWITHOUT_NUMPY)
-endif()
+include_directories(
+    ${Python3_INCLUDE_DIRS}
+    ${Python3_NumPy_INCLUDE_DIRS}
+)
+link_libraries(
+    Eigen3::Eigen
+    Python3::Python
+    Python3::NumPy
+)
 
 add_subdirectory(examples)
